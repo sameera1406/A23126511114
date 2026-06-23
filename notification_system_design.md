@@ -1,103 +1,94 @@
-#Stage 1:Notification-System-Design
+# Stage 1: Notification System Design
 
-##Objective
-Design REST APIs for a notification platform that allows users to recieve and manage notifications while logged in.\
+## Objective
 
-#Core Action Supported
-the Notification System Should support the following Actions:
-1.create a Notification
-2.get All the Notifications for a User 
-3.get a specific notification
-4.mark notification as read
-5.Mark all notifications as Read
-6.delete a notification
-7.get unread notification count
-8.recieve real-time notifications
+Design REST APIs for a notification system that allows users to receive and manage notifications after logging into the application.
 
-#Bas-URL
+## Core Features
 
+The notification system should support the following operations:
+
+1. Create a notification
+2. View all notifications of a user
+3. View a specific notification
+4. Mark a notification as read
+5. Mark all notifications as read
+6. Delete a notification
+7. Get unread notification count
+8. Receive real-time notifications
+
+## Base URL
+
+```http
 https://api.notificationservice.com/api/v1
-
-#common headers
-
-##Request Header
-
-```http
-Content-Type:application/json
-Accept:Application/json
-Authorization:Bearer <token>
-```
-#1.Create Notification
-
-##EndPoint
-
-```http
-POST/notifications
 ```
 
-##Request Body
+## Common Request Headers
+
+```http
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer <token>
+```
+
+---
+
+## 1. Create Notification
+
+### Endpoint
+
+```http
+POST /notifications
+```
+
+### Request Body
 
 ```json
 {
-    "userId":"USR001",
-    "Title":"New Message",
-    "Message":"you have recieved a new Message",
-    "Type":"MESSAGE",
-    "Priority":"HIGH"
+  "userId": "USR001",
+  "title": "New Message",
+  "message": "You have received a new message",
+  "type": "MESSAGE",
+  "priority": "HIGH"
 }
 ```
-##Success Response
-```http
-201 Created
-```
-```json
-{
-    "success":true,
-    "message":"notification created Successfully",
-    "data":{
-        "notificationId":"NOTIF001",
-        "userId":"USR001",
-        "Title":"New Message",
-        "Message":"you have recieved a new Message",
-        "Type":"MESSAGE",
-        "Priority":"HIGH",
-        "isRead":"false,
-        "createdAt":"2026-06-23T10:30:00Z"
-    }
-}
-```
-#2.Get All Notifications
-##endPoint
-```http
-GET /users/{userId}/notifications
-```
-##Example
-```http
-GET /users/USR001/notifications
-```
-##Query Parameters
-```http
-?page=1&limit=10&status=unread
-```
-##Success Response
+
+### Response
+
 ```json
 {
   "success": true,
-  "count": 2,
+  "message": "Notification created successfully"
+}
+```
+
+---
+
+## 2. Get All Notifications
+
+### Endpoint
+
+```http
+GET /users/{userId}/notifications
+```
+
+### Example
+
+```http
+GET /users/USR001/notifications?page=1&limit=10
+```
+
+### Response
+
+```json
+{
+  "success": true,
   "data": [
     {
       "notificationId": "NOTIF001",
       "title": "New Message",
-      "message": "You have received a new message.",
-      "isRead": false,
-      "createdAt": "2026-06-23T10:30:00Z"
-    },
-    {
-      "notificationId": "NOTIF002",
-      "title": "Order Shipped",
-      "message": "Your order has been shipped.",
-      "isRead": true,
-      "createdAt": "2026-06-22T08:00:00Z"
+      "message": "You have received a new message",
+      "isRead": false
     }
   ]
 }
@@ -105,129 +96,61 @@ GET /users/USR001/notifications
 
 ---
 
-# 3. Get Specific Notification
+## 3. Get Specific Notification
 
-## Endpoint
+### Endpoint
 
 ```http
 GET /notifications/{notificationId}
 ```
 
-## Example
+Example:
 
 ```http
 GET /notifications/NOTIF001
 ```
 
-## Success Response
-
-```json
-{
-  "success": true,
-  "data": {
-    "notificationId": "NOTIF001",
-    "title": "New Message",
-    "message": "You have received a new message.",
-    "type": "MESSAGE",
-    "priority": "HIGH",
-    "isRead": false,
-    "createdAt": "2026-06-23T10:30:00Z"
-  }
-}
-```
-
 ---
 
-# 4. Mark Notification as Read
+## 4. Mark Notification as Read
 
-## Endpoint
+### Endpoint
 
 ```http
 PATCH /notifications/{notificationId}/read
 ```
 
-## Example
-
-```http
-PATCH /notifications/NOTIF001/read
-```
-
-## Success Response
-
-```json
-{
-  "success": true,
-  "message": "Notification marked as read"
-}
-```
-
 ---
 
-# 5. Mark All Notifications as Read
+## 5. Mark All Notifications as Read
 
-## Endpoint
+### Endpoint
 
 ```http
 PATCH /users/{userId}/notifications/read-all
 ```
 
-## Example
-
-```http
-PATCH /users/USR001/notifications/read-all
-```
-
-## Success Response
-
-```json
-{
-  "success": true,
-  "message": "All notifications marked as read"
-}
-```
-
 ---
 
-# 6. Delete Notification
+## 6. Delete Notification
 
-## Endpoint
+### Endpoint
 
 ```http
 DELETE /notifications/{notificationId}
 ```
 
-## Example
-
-```http
-DELETE /notifications/NOTIF001
-```
-
-## Success Response
-
-```json
-{
-  "success": true,
-  "message": "Notification deleted successfully"
-}
-```
-
 ---
 
-# 7. Get Unread Notification Count
+## 7. Get Unread Notification Count
 
-## Endpoint
+### Endpoint
 
 ```http
 GET /users/{userId}/notifications/unread-count
 ```
 
-## Example
-
-```http
-GET /users/USR001/notifications/unread-count
-```
-
-## Success Response
+### Sample Response
 
 ```json
 {
@@ -238,7 +161,7 @@ GET /users/USR001/notifications/unread-count
 
 ---
 
-# Notification JSON Schema
+## Notification Schema
 
 ```json
 {
@@ -246,55 +169,106 @@ GET /users/USR001/notifications/unread-count
   "userId": "string",
   "title": "string",
   "message": "string",
-  "type": "MESSAGE | ORDER | ALERT | SYSTEM",
+  "type": "MESSAGE | ALERT | SYSTEM",
   "priority": "LOW | MEDIUM | HIGH",
-  "isRead": "boolean",
+  "isRead": false,
   "createdAt": "datetime"
 }
 ```
 
 ---
 
-# Real-Time Notification Mechanism
+## Real-Time Notification Mechanism
 
-The notification system should support real-time updates using **WebSockets**.
+Real-time notifications can be implemented using **WebSockets**.
 
-## Workflow
+### Working
 
 1. User logs into the application.
-2. Client establishes a WebSocket connection with the server.
-3. When a new notification is generated, the server immediately pushes the notification to the connected user.
-4. The client updates the notification panel without refreshing the page.
+2. Client establishes a WebSocket connection.
+3. When a new notification is generated, the server pushes it to the user instantly.
+4. The notification panel gets updated without refreshing the page.
 
-## WebSocket Endpoint
+### WebSocket Endpoint
 
 ```http
 ws://api.notificationservice.com/notifications
 ```
 
-## Sample Real-Time Event
-
-```json
-{
-  "event": "NEW_NOTIFICATION",
-  "data": {
-    "notificationId": "NOTIF010",
-    "title": "Payment Successful",
-    "message": "Your payment has been processed."
-  }
-}
-```
-
 ---
 
-# Error Response Format
+## Error Response Format
 
 ```json
 {
   "success": false,
-  "error": {
-    "code": 404,
-    "message": "Notification not found"
-  }
+  "message": "Notification not found"
 }
+```
+# Stage 2 - Persistent Storage Design
+
+## Recommended Database
+
+I would use **MongoDB** to store notifications.
+
+### Why MongoDB?
+
+* Notifications are stored as JSON documents, so MongoDB is a good fit.
+* It supports high write operations.
+* Flexible schema allows adding new fields easily.
+* Supports scaling using sharding.
+
+## Notification Schema
+
+```json
+{
+  "_id": "ObjectId",
+  "userId": "USR001",
+  "title": "New Message",
+  "message": "You have received a new message",
+  "type": "MESSAGE",
+  "priority": "HIGH",
+  "isRead": false,
+  "createdAt": "2026-06-23T10:30:00Z"
+}
+```
+
+## Indexes
+
+```javascript
+db.notifications.createIndex({ userId: 1, isRead: 1 })
+db.notifications.createIndex({ createdAt: -1 })
+```
+
+## Possible Problems and Solutions
+    Slow queries         -Use indexes                    
+    Large amount of data - Use archiving and sharding     
+    High read traffic    - Use Redis cache and pagination 
+
+
+### Get unread notifications
+
+```javascript
+db.notifications.find({
+  userId: "USR001",
+  isRead: false
+})
+```
+
+### Mark notification as read
+
+```javascript
+db.notifications.updateOne(
+  { notificationId: "NOTIF001" },
+  { $set: { isRead: true } }
+)
+```
+
+### Get unread count
+
+```javascript
+db.notifications.countDocuments({
+  userId: "USR001",
+  isRead: false
+})
 ```
