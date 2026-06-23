@@ -272,3 +272,54 @@ db.notifications.countDocuments({
   isRead: false
 })
 ```
+# Stage 3 - Query Optimization
+
+## Existing Query
+
+```sql
+SELECT *
+FROM notifications
+WHERE studentID = 1042
+AND isRead = false
+ORDER BY createdAt ASC;
+```
+
+## Is the Query Correct?
+
+Yes. It correctly fetches unread notifications of student `1042`.
+
+## Why is it Slow?
+
+The table contains millions of records. Without indexes, the database performs a full table scan, which takes more time.
+
+## Optimization
+
+Create a composite index:
+
+```sql
+CREATE INDEX idx_student_read_created
+ON notifications(studentID, isRead, createdAt);
+```
+
+## Optimized Query
+
+```sql
+SELECT notificationID, message, createdAt
+FROM notifications
+WHERE studentID = 1042
+AND isRead = false
+ORDER BY createdAt ASC;
+```
+
+## Should We Add Indexes on Every Column?
+
+No. Too many indexes increase storage and slow down insert and update operations. Indexes should be created only on frequently searched columns.
+
+## Query to Find Students Who Received Placement Notifications in Last 7 Days
+
+```sql
+SELECT DISTINCT studentID
+FROM notifications
+WHERE notificationType = 'Placement'
+AND createdAt >= NOW() - INTERVAL 7 DAY;
+```
